@@ -1,8 +1,8 @@
 // Sensor state (persists across calls)
 let sensorState = {
-    temperature: 28,
-    humidity: 60,
-    soundLevel: 35,
+    temperature: 24,
+    humidity: 55,
+    soundLevel: 30,
     fireActive: false,
     fireCooldown: 0,
     fireDuration: 0
@@ -13,10 +13,10 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const randomDrift = (range) => (Math.random() * range * 2 - range);
 
 const getSensorData = () => {
-    // Random environmental drift
-    sensorState.temperature += randomDrift(0.3);
-    sensorState.humidity += randomDrift(0.8);
-    sensorState.soundLevel += randomDrift(2);
+    // Random environmental drift (smaller variations)
+    sensorState.temperature += randomDrift(0.15);
+    sensorState.humidity += randomDrift(0.4);
+    sensorState.soundLevel += randomDrift(1);
 
     // Fire trigger logic (more frequent)
     if (!sensorState.fireActive && sensorState.fireCooldown === 0 && Math.random() > 0.92) {
@@ -50,7 +50,7 @@ const getSensorData = () => {
 
     // Status logic
     let status = 'NORMAL';
-    if (sensorState.temperature > 45 || sensorState.soundLevel > 80) {
+    if (sensorState.temperature > 50 || sensorState.soundLevel > 85) {
         status = 'WARNING';
     }
     if (sensorState.fireActive) {
