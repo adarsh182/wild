@@ -59,7 +59,7 @@ function App() {
 
         {/* Floating Alert Toast */}
         {activeAlert && (
-            <div className="fixed bottom-10 left-10 bg-red-600 text-white p-4 rounded-lg shadow-2xl border-2 border-red-400 flex items-start gap-3 max-w-sm z-50 animate-in slide-in-from-left duration-300">
+            <div className="fixed right-10 top-1/2 transform -translate-y-1/2 bg-red-600 text-white p-4 rounded-lg shadow-2xl border-2 border-red-400 flex items-start gap-3 max-w-sm z-50 animate-in slide-in-from-right duration-300">
                 <AlertTriangle className="w-6 h-6 shrink-0" />
                 <div>
                     <h4 className="font-bold text-lg uppercase tracking-wide">SYSTEM ALERT</h4>
