@@ -5,6 +5,20 @@
   text-align: center;
 }
 
+/* Prevent page scrolling */
+html, body {
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100vw !important;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .read-the-docs {
   color: #888;
 }

@@ -10,13 +10,6 @@ import { AlertTriangle, X } from 'lucide-react';
 function App() {
   const { isConnected, detections, sensorData, alerts } = useSocket();
   const [activeAlert, setActiveAlert] = React.useState(null);
-  const [appLoaded, setAppLoaded] = React.useState(false);
-
-  React.useEffect(() => {
-    // Simulate initial load delay for smooth appearance
-    const timer = setTimeout(() => setAppLoaded(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
 
   React.useEffect(() => {
     if (alerts.length > 0) {
@@ -30,11 +23,11 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className={`min-h-screen bg-slate-900 text-slate-200 font-sans overflow-hidden flex flex-col transition-opacity duration-500 ${appLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`min-h-screen bg-slate-900 text-slate-200 font-sans overflow-hidden flex flex-col fixed inset-0`}>
         <Header status={isConnected ? 'connected' : 'disconnected'} />
         
         {/* Main Dashboard Grid */}
-        <main className="flex-1 p-4 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden h-full">
+        <main className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-hidden h-full p-4">
           
           {/* Left Column: Feed & Sensors */}
           <div className="md:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
