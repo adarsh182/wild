@@ -3,13 +3,13 @@ import { Camera, AlertCircle } from 'lucide-react';
 
 const LiveFeed = ({ detections }) => {
   return (
-    <div className="bg-slate-800 rounded-lg p-4 h-full flex flex-col border border-slate-700">
-      <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+    <div className="bg-slate-800 rounded-lg p-4 h-full flex flex-col border border-slate-700 overflow-hidden">
+      <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2 flex-shrink-0">
         <Camera className="w-5 h-5 text-blue-400" />
         Live Detection Feed
       </h2>
       
-      <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar scroll-smooth">
+      <div className="flex-1 overflow-y-auto space-y-3 pr-3 custom-scrollbar scroll-smooth"  style={{ scrollBehavior: 'smooth' }}>
         {detections.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-slate-500 py-10">
             <div className="w-12 h-12 rounded-full bg-slate-700/50 flex items-center justify-center mb-3">
