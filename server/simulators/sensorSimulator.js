@@ -36,6 +36,17 @@ const getSensorData = () => {
             sensorState.fireActive = false;
             sensorState.fireCooldown = 10; // Prevent immediate retrigger
         }
+    } else {
+        // Cooling/recovery when fire is off: gradually return to baseline
+        if (sensorState.temperature > 25) {
+            sensorState.temperature -= 0.3;  // Cool down
+        }
+        if (sensorState.soundLevel > 32) {
+            sensorState.soundLevel -= 0.5;   // Quiet down
+        }
+        if (sensorState.humidity < 55) {
+            sensorState.humidity += 0.2;     // Humidity recovers
+        }
     }
 
     // Cooldown handling
