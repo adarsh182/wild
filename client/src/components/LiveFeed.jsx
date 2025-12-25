@@ -9,7 +9,7 @@ const LiveFeed = ({ detections }) => {
         Live Detection Feed
       </h2>
       
-      <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar scroll-smooth">
         {detections.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-slate-500 py-10">
             <div className="w-12 h-12 rounded-full bg-slate-700/50 flex items-center justify-center mb-3">
