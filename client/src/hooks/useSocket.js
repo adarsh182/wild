@@ -82,7 +82,7 @@ export const useSocket = () => {
     };
 
     fetchAll();
-    const interval = setInterval(fetchAll, 3000);
+    const interval = setInterval(fetchAll, 2000); // Poll every 2s
     return () => { mounted = false; clearInterval(interval); };
   }, []);
 

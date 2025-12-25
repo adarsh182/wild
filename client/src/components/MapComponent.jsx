@@ -15,6 +15,9 @@ const defaultCenter = {
 const mapOptions = {
   disableDefaultUI: true,
   zoomControl: true,
+  gestureHandling: 'greedy',
+  fullscreenControl: false,
+  mapTypeControl: false,
   styles: [
     { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
     { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -95,6 +98,7 @@ const MapComponent = ({ detections }) => {
 
   const [selectedDetection, setSelectedDetection] = React.useState(null);
   const mapRef = React.useRef(null);
+  const hasInitialFitRef = React.useRef(false);
 
   const activeDetections = useMemo(() => {
     // Only show recent detections (last 2 mins) on map to avoid clutter
@@ -102,23 +106,28 @@ const MapComponent = ({ detections }) => {
     return detections.filter(d => (now - new Date(d.timestamp)) < 120000);
   }, [detections]);
 
-  // Fit map bounds to all detection points
+  // Set initial map view ONLY once - never auto-adjust after
   useEffect(() => {
-    if (mapRef.current && activeDetections.length > 0 && isLoaded) {
-      const bounds = new window.google.maps.LatLngBounds();
-      
-      activeDetections.forEach(detection => {
-        bounds.extend(new window.google.maps.LatLng(detection.location.lat, detection.location.lng));
-      });
+    if (mapRef.current && isLoaded && !hasInitialFitRef.current) {
+      hasInitialFitRef.current = true;
 
-      // Fit map to bounds with generous padding for better visibility
-      mapRef.current.fitBounds(bounds, { top: 80, right: 80, bottom: 80, left: 80 });
-    } else if (mapRef.current && isLoaded && activeDetections.length === 0) {
-      // If no detections, center on default location
-      mapRef.current.setCenter(defaultCenter);
-      mapRef.current.setZoom(12);
+      if (activeDetections.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        activeDetections.forEach(detection => {
+          bounds.extend(new window.google.maps.LatLng(detection.location.lat, detection.location.lng));
+        });
+        // Fit once and never again - user can pan/zoom freely
+        setTimeout(() => {
+          if (mapRef.current && bounds) {
+            mapRef.current.fitBounds(bounds, { top: 100, right: 100, bottom: 100, left: 100 });
+          }
+        }, 200);
+      } else {
+        mapRef.current.setCenter(defaultCenter);
+        mapRef.current.setZoom(12);
+      }
     }
-  }, [activeDetections, isLoaded]);
+  }, [isLoaded]); // Only on load, never again
 
   if (!isLoaded) return (
     <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center">
