@@ -14,7 +14,9 @@ export const useSocket = () => {
 
   useEffect(() => {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+    // On production: use env var or hardcode Render URL; on local: use localhost
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 
+                       (isLocal ? 'http://localhost:3000' : 'https://wild-7nsw.onrender.com');
 
     if (isLocal) {
       const SOCKET_URL = backendUrl;
@@ -46,11 +48,11 @@ export const useSocket = () => {
       return () => newSocket.close();
     }
 
-    // Production / deployed: polling-based fallback to Render backend or same origin
+    // Production / deployed: polling-based fallback to Render backend
     let mounted = true;
     const fetchAll = async () => {
       try {
-        const baseUrl = isLocal ? backendUrl : window.location.origin;
+        const baseUrl = backendUrl;
         const [hRes, sRes] = await Promise.all([
           fetch(`${baseUrl}/api/history?count=50`),
           fetch(`${baseUrl}/api/sensors?count=1`)
