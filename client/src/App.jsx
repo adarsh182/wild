@@ -9,6 +9,13 @@ import { AlertTriangle, X } from 'lucide-react';
 function App() {
   const { isConnected, detections, sensorData, alerts } = useSocket();
   const [activeAlert, setActiveAlert] = React.useState(null);
+  const [appLoaded, setAppLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    // Simulate initial load delay for smooth appearance
+    const timer = setTimeout(() => setAppLoaded(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     if (alerts.length > 0) {
@@ -21,7 +28,7 @@ function App() {
   }, [alerts]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 font-sans overflow-hidden flex flex-col">
+    <div className={`min-h-screen bg-slate-900 text-slate-200 font-sans overflow-hidden flex flex-col transition-opacity duration-500 ${appLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <Header status={isConnected ? 'connected' : 'disconnected'} />
       
       {/* Main Dashboard Grid */}
@@ -38,16 +45,16 @@ function App() {
         </div>
 
         {/* Right Column: Map */}
-        <div className="md:col-span-3 bg-slate-800 rounded-lg border border-slate-700 relative overflow-hidden">
+        <div className="md:col-span-3 bg-slate-800 rounded-lg border border-slate-700 relative overflow-hidden shadow-lg">
             <MapComponent detections={detections} />
             
-            {/* Map Overlay Stats */}
-            <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur p-3 rounded-lg border border-slate-600">
+            {/* Map Overlay Stats - with smooth transition */}
+            <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur p-3 rounded-lg border border-slate-600 transition-all duration-300 hover:bg-slate-900/90">
                 <h3 className="text-xs font-bold text-slate-400 uppercase mb-1">Active Zones</h3>
                 <div className="text-xl font-bold text-white">{new Set(detections.map(d => d.zone)).size} <span className="text-xs text-slate-500 font-normal">/ 4</span></div>
             </div>
             
-             <div className="absolute top-4 right-32 bg-slate-900/80 backdrop-blur p-3 rounded-lg border border-slate-600">
+             <div className="absolute top-4 right-32 bg-slate-900/80 backdrop-blur p-3 rounded-lg border border-slate-600 transition-all duration-300 hover:bg-slate-900/90">
                 <h3 className="text-xs font-bold text-slate-400 uppercase mb-1">Total Sightings</h3>
                 <div className="text-xl font-bold text-white">{detections.length}</div>
             </div>
@@ -57,7 +64,7 @@ function App() {
 
       {/* Floating Alert Toast */}
       {activeAlert && (
-          <div className="fixed bottom-10 right-10 bg-red-600 text-white p-4 rounded-lg shadow-2xl border-2 border-red-400 animate-bounce flex items-start gap-3 max-w-sm z-50">
+          <div className="fixed bottom-10 right-10 bg-red-600 text-white p-4 rounded-lg shadow-2xl border-2 border-red-400 flex items-start gap-3 max-w-sm z-50 animate-in slide-in-from-right duration-300">
               <AlertTriangle className="w-6 h-6 shrink-0" />
               <div>
                   <h4 className="font-bold text-lg uppercase tracking-wide">SYSTEM ALERT</h4>

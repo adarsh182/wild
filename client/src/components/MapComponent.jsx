@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
 
 const containerStyle = {
@@ -7,7 +7,7 @@ const containerStyle = {
   borderRadius: '0.5rem'
 };
 
-const center = {
+const defaultCenter = {
   lat: -1.2921,
   lng: 36.8219
 };
@@ -94,6 +94,7 @@ const MapComponent = ({ detections }) => {
   });
 
   const [selectedDetection, setSelectedDetection] = React.useState(null);
+  const mapRef = React.useRef(null);
 
   const activeDetections = useMemo(() => {
     // Only show recent detections (last 2 mins) on map to avoid clutter
@@ -101,12 +102,43 @@ const MapComponent = ({ detections }) => {
     return detections.filter(d => (now - new Date(d.timestamp)) < 120000);
   }, [detections]);
 
-  if (!isLoaded) return <div className="w-full h-full bg-slate-800 animate-pulse rounded-lg flex items-center justify-center text-slate-500">Loading Map...</div>;
+  // Fit map bounds to all detection points
+  useEffect(() => {
+    if (mapRef.current && activeDetections.length > 0 && isLoaded) {
+      const bounds = new window.google.maps.LatLngBounds();
+      
+      activeDetections.forEach(detection => {
+        bounds.extend(new window.google.maps.LatLng(detection.location.lat, detection.location.lng));
+      });
+
+      // Fit map to bounds with padding
+      mapRef.current.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+    } else if (mapRef.current && isLoaded) {
+      // If no detections, center on default location
+      mapRef.current.setCenter(defaultCenter);
+      mapRef.current.setZoom(14);
+    }
+  }, [activeDetections, isLoaded]);
+
+  if (!isLoaded) return (
+    <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-16 h-16 rounded-full border-4 border-slate-700 border-t-blue-500 animate-spin"></div>
+        <p className="text-slate-400 text-sm font-medium">Loading map...</p>
+      </div>
+    </div>
+  );
 
   return (
     <GoogleMap
+      onLoad={(mapInstance) => {
+        mapRef.current = mapInstance;
+        // Set initial center
+        mapInstance.setCenter(defaultCenter);
+        mapInstance.setZoom(14);
+      }}
       mapContainerStyle={containerStyle}
-      center={center}
+      center={defaultCenter}
       zoom={14}
       options={mapOptions}
     >

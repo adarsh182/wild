@@ -11,10 +11,16 @@ const LiveFeed = ({ detections }) => {
       
       <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
         {detections.length === 0 ? (
-          <div className="text-center text-slate-500 py-10">No activity detected.</div>
+          <div className="flex flex-col items-center justify-center h-full text-slate-500 py-10">
+            <div className="w-12 h-12 rounded-full bg-slate-700/50 flex items-center justify-center mb-3">
+              <Camera className="w-6 h-6 text-slate-600" />
+            </div>
+            <p className="text-sm font-medium">No detections yet</p>
+            <p className="text-xs text-slate-600 mt-1">Waiting for activity...</p>
+          </div>
         ) : (
           detections.map((d) => (
-            <div key={d.id} className={`p-3 rounded-md border ${d.riskLevel === 'CRITICAL' ? 'bg-red-900/20 border-red-500/50' : (d.riskLevel === 'High' ? 'bg-orange-900/20 border-orange-500/50' : 'bg-slate-700/50 border-slate-600')} transition-all hover:bg-slate-700`}>
+            <div key={d.id} className={`p-3 rounded-md border transition-all duration-200 ease-in-out transform hover:scale-102 ${d.riskLevel === 'CRITICAL' ? 'bg-red-900/20 border-red-500/50 hover:shadow-lg hover:shadow-red-500/20' : (d.riskLevel === 'High' ? 'bg-orange-900/20 border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/20' : 'bg-slate-700/50 border-slate-600 hover:shadow-lg hover:shadow-slate-600/20')}`}>
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="font-bold text-white flex items-center gap-2">
