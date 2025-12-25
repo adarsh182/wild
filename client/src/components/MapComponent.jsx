@@ -111,12 +111,12 @@ const MapComponent = ({ detections }) => {
         bounds.extend(new window.google.maps.LatLng(detection.location.lat, detection.location.lng));
       });
 
-      // Fit map to bounds with padding
-      mapRef.current.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
-    } else if (mapRef.current && isLoaded) {
+      // Fit map to bounds with generous padding for better visibility
+      mapRef.current.fitBounds(bounds, { top: 80, right: 80, bottom: 80, left: 80 });
+    } else if (mapRef.current && isLoaded && activeDetections.length === 0) {
       // If no detections, center on default location
       mapRef.current.setCenter(defaultCenter);
-      mapRef.current.setZoom(14);
+      mapRef.current.setZoom(12);
     }
   }, [activeDetections, isLoaded]);
 
@@ -133,9 +133,11 @@ const MapComponent = ({ detections }) => {
     <GoogleMap
       onLoad={(mapInstance) => {
         mapRef.current = mapInstance;
-        // Set initial center
-        mapInstance.setCenter(defaultCenter);
-        mapInstance.setZoom(14);
+        // Initial fit will be handled by useEffect
+        if (activeDetections.length === 0) {
+          mapInstance.setCenter(defaultCenter);
+          mapInstance.setZoom(14);
+        }
       }}
       mapContainerStyle={containerStyle}
       center={defaultCenter}
